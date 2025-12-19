@@ -1,5 +1,7 @@
 package com.sadcodes.fitnesstrackerapp.controller;
 
+import com.sadcodes.fitnesstrackerapp.dto.RegisterRequest;
+import com.sadcodes.fitnesstrackerapp.dto.UserResponse;
 import com.sadcodes.fitnesstrackerapp.model.User;
 import com.sadcodes.fitnesstrackerapp.service.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +20,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody User user){
-        return userService.register(user);
+    public UserResponse register(@RequestBody RegisterRequest registerRequest){
+        return userService.register(registerRequest);
     }
 }
