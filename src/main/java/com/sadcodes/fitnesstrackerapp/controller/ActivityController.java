@@ -22,9 +22,11 @@ public class ActivityController {
         return new ResponseEntity<>(activityService.trackActivity(request), HttpStatus.CREATED);
     }
 
+
     @GetMapping
-    public ResponseEntity<List<ActivityResponse>> trackActivity(){
-        return new ResponseEntity<>(activityService.trackActivity(),HttpStatus.OK);
+    public ResponseEntity<List<ActivityResponse>> getUserActivities(@RequestHeader(value = "X-User-ID") String userId) {
+        return new ResponseEntity<>(activityService.getAllUserActivity(), HttpStatus.OK);
     }
+
 
 }

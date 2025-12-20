@@ -37,16 +37,13 @@ public class ActivityService {
         return mapToResponse(savedActivity);
     }
 
-    public List<ActivityResponse> trackActivity() {
-        return activityRepository.findAll()
-                .stream()
-                .map((activity -> new ActivityResponse(activity.getId(), activity.getUser().getId(),
-                        activity.getType(), activity.getAdditionalMetrics(), activity.getDuration()
-                        , activity.getCaloriesBurn(), activity.getStartTime(), activity.getCreatedAt()
-                        , activity.getUpdatedAt()
-                ))).toList();
+    public List<ActivityResponse> getUserActivities(String userId) {
+        List<Activity> activitiesList = activityRepository.findByUserId(userId);
+        return activitiesList.stream()
+                .map(activity -> mapToResponse(activity)).toList();
 
     }
+
 
     public ActivityResponse mapToResponse(Activity activity) {
         ActivityResponse response = new ActivityResponse();
