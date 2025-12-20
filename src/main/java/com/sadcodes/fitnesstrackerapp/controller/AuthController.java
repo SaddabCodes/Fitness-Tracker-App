@@ -2,7 +2,6 @@ package com.sadcodes.fitnesstrackerapp.controller;
 
 import com.sadcodes.fitnesstrackerapp.dto.RegisterRequest;
 import com.sadcodes.fitnesstrackerapp.dto.UserResponse;
-import com.sadcodes.fitnesstrackerapp.model.User;
 import com.sadcodes.fitnesstrackerapp.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
