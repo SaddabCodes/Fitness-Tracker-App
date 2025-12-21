@@ -29,7 +29,7 @@ public class Activity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
-            name = "user_id",
+            name = "userId",
             nullable = false,
             foreignKey = @ForeignKey(name = "fk_activity_user")
     )

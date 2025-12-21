@@ -5,6 +5,7 @@ import com.sadcodes.fitnesstrackerapp.model.Recommendation;
 import com.sadcodes.fitnesstrackerapp.service.RecommendationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,7 @@ public class RecommendationController {
 
     }
 
+    @PostMapping
     public ResponseEntity<Recommendation> generateRecommendation(@RequestBody RecommendationRequest request) {
         Recommendation recommendation = recommendationService.generateRecommendation(request);
         return new ResponseEntity<>(recommendation, HttpStatus.CREATED);

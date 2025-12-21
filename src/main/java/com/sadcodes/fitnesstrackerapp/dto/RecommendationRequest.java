@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 public class RecommendationRequest {
 
-    private String id;
+    private String  id;
     private String activityId;
     private List<String> improvements;
     private List<String> suggestion;
