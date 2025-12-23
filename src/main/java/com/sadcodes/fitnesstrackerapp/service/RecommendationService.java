@@ -21,11 +21,14 @@ public class RecommendationService {
     private final ActivityRepository activityRepository;
 
     public Recommendation generateRecommendation(RecommendationRequest request) {
+
         User user = userRepository.findById(request.getId())
-                .orElseThrow(() -> new RuntimeException("User not found: " + request.getId()));
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
 
         Activity activity = activityRepository.findById(request.getActivityId())
-                .orElseThrow(() -> new RuntimeException("User not found: " + request.getId()));
+                .orElseThrow(() ->
+                        new RuntimeException("Activity not found"));
 
         Recommendation recommendation = Recommendation.builder()
                 .user(user)
@@ -36,14 +39,13 @@ public class RecommendationService {
                 .build();
 
         return recommendationRepository.save(recommendation);
-
     }
 
     public List<Recommendation> getUserRecommendation(String userId) {
-        return recommendationRepository.findByUserId(userId);
+        return recommendationRepository.findByUser_Id(userId);
     }
 
     public List<Recommendation> getActivityRecommendation(String activityId) {
-        return recommendationRepository.findByActivityId(activityId);
+        return recommendationRepository.findByActivity_Id(activityId);
     }
 }

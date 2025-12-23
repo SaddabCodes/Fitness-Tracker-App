@@ -16,14 +16,16 @@ public class ActivityService {
     private final ActivityRepository activityRepository;
     private final UserRepository userRepository;
 
-    public ActivityService(ActivityRepository activityRepository, UserRepository userRepository) {
+    public ActivityService(ActivityRepository activityRepository,
+                           UserRepository userRepository) {
         this.activityRepository = activityRepository;
         this.userRepository = userRepository;
     }
 
     public ActivityResponse trackActivity(ActivityRequest request) {
         User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new RuntimeException("User with id:" + request.getUserId() + " is not available"));
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
 
         Activity activity = Activity.builder()
                 .user(user)
@@ -33,31 +35,29 @@ public class ActivityService {
                 .startTime(request.getStartTime())
                 .additionalMetrics(request.getAdditionalMetrics())
                 .build();
-        Activity savedActivity = activityRepository.save(activity);
-        return mapToResponse(savedActivity);
+
+        Activity saved = activityRepository.save(activity);
+        return mapToResponse(saved);
     }
 
     public List<ActivityResponse> getUserActivities(String userId) {
-        List<Activity> activitiesList = activityRepository.findByUserId(userId);
-        return activitiesList.stream()
-                .map(activity -> mapToResponse(activity)).toList();
-
+        return activityRepository.findByUser_Id(userId)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
-
-    public ActivityResponse mapToResponse(Activity activity) {
-        ActivityResponse response = new ActivityResponse();
-        response.setId(activity.getId());
-        response.setUserId(activity.getUser().getId());
-        response.setType(activity.getType());
-        response.setDuration(activity.getDuration());
-        response.setCaloriesBurn(activity.getCaloriesBurn());
-        response.setStartTime(activity.getStartTime());
-        response.setAdditionalMetrics(activity.getAdditionalMetrics());
-        response.setCreatedAt(activity.getCreatedAt());
-        response.setUpdatedAt(activity.getUpdatedAt());
-        return response;
+    private ActivityResponse mapToResponse(Activity activity) {
+        ActivityResponse res = new ActivityResponse();
+        res.setId(activity.getId());
+        res.setUserId(activity.getUser().getId());
+        res.setType(activity.getType());
+        res.setDuration(activity.getDuration());
+        res.setCaloriesBurn(activity.getCaloriesBurn());
+        res.setStartTime(activity.getStartTime());
+        res.setAdditionalMetrics(activity.getAdditionalMetrics());
+        res.setCreatedAt(activity.getCreatedAt());
+        res.setUpdatedAt(activity.getUpdatedAt());
+        return res;
     }
-
-
 }

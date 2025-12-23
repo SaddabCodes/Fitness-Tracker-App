@@ -1,62 +1,69 @@
 package com.sadcodes.fitnesstrackerapp.service;
 
+import com.sadcodes.fitnesstrackerapp.dto.LoginRequest;
+import com.sadcodes.fitnesstrackerapp.dto.LoginResponse;
 import com.sadcodes.fitnesstrackerapp.dto.RegisterRequest;
 import com.sadcodes.fitnesstrackerapp.dto.UserResponse;
 import com.sadcodes.fitnesstrackerapp.model.User;
+import com.sadcodes.fitnesstrackerapp.model.UserRole;
 import com.sadcodes.fitnesstrackerapp.repository.UserRepository;
-import lombok.Builder;
+import com.sadcodes.fitnesstrackerapp.security.JwtUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.util.List;
-
 @Service
-@Builder
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       JwtUtils jwtUtils) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtils = jwtUtils;
     }
 
-    public UserResponse register(RegisterRequest registerRequest) {
- /*       User user = new User(
-                null,
-                registerRequest.getFirstName(),
-                registerRequest.getLastName(),
-                registerRequest.getPassword(),
-                registerRequest.getEmail(),
-                Instant.parse("2025-12-08T14:49:07.208Z")
-                        .atZone(ZoneOffset.UTC)
-                        .toLocalDateTime(),
-                Instant.parse("2025-12-08T14:49:07.208Z")
-                        .atZone(ZoneOffset.UTC)
-                        .toLocalDateTime()
-                , List.of(),
-                List.of()
-        );*/
-        User user = User.builder().
-                firstName(registerRequest.getFirstName())
-                .lastName(registerRequest.getLastName())
-                .password(registerRequest.getPassword())
-                .email(registerRequest.getEmail()).
-                build();
-        User savedUser = userRepository.save(user);
-        return mapToResponse(savedUser);
+    public UserResponse register(RegisterRequest req) {
+        UserRole role = req.getRole()!=null ? req.getRole():UserRole.USER;
+        User user = User.builder()
+                .firstName(req.getFirstName())
+                .lastName(req.getLastName())
+                .email(req.getEmail())
+                .password(passwordEncoder.encode(req.getPassword()))
+                .role(role)
+                .build();
+
+        User saved = userRepository.save(user);
+        return mapToResponse(saved);
     }
 
-    private UserResponse mapToResponse(User savedUser) {
-        UserResponse userResponse = new UserResponse();
-        userResponse.setId(savedUser.getId());
-        userResponse.setFirstName(savedUser.getFirstName());
-        userResponse.setLastName(savedUser.getLastName());
-        userResponse.setPassword(savedUser.getPassword());
-        userResponse.setEmail(savedUser.getEmail());
-        userResponse.setCreatedAt(savedUser.getCreatedAt());
-        userResponse.setUpdatedAt(savedUser.getUpdatedAt());
-        return userResponse;
+    public LoginResponse login(LoginRequest req) {
+
+        User user = userRepository.findByEmail(req.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));;
+        if (user == null ||
+                !passwordEncoder.matches(req.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid email or password");
+        }
+
+        String token = jwtUtils.generateToken(
+                user.getEmail(),
+                user.getRole().name()
+        );
+
+        return new LoginResponse(token, mapToResponse(user));
+    }
+
+    private UserResponse mapToResponse(User user) {
+        UserResponse res = new UserResponse();
+        res.setId(user.getId());
+        res.setFirstName(user.getFirstName());
+        res.setLastName(user.getLastName());
+        res.setEmail(user.getEmail());
+        res.setCreatedAt(user.getCreatedAt());
+        res.setUpdatedAt(user.getUpdatedAt());
+        return res;
     }
 }

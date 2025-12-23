@@ -5,7 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface ActivityRepository extends JpaRepository<Activity,String> {
+public interface ActivityRepository extends JpaRepository<Activity, String> {
 
-    List<Activity> findByUserId(String userId);
+    // FIX: use nested property
+    List<Activity> findByUser_Id(String userId);
 }

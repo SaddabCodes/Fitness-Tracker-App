@@ -2,13 +2,12 @@ package com.sadcodes.fitnesstrackerapp.repository;
 
 import com.sadcodes.fitnesstrackerapp.model.Recommendation;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
-public interface RecommendationRepository extends JpaRepository<Recommendation,String > {
-    List<Recommendation> findByUserId(String userId);
+public interface RecommendationRepository extends JpaRepository<Recommendation, String> {
 
-    List<Recommendation> findByActivityId(String activityId);
+    List<Recommendation> findByUser_Id(String userId);
+
+    List<Recommendation> findByActivity_Id(String activityId);
 }
