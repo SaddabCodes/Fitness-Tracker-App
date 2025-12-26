@@ -1,0 +1,6 @@
+services:
+  app:
+    image: fitness-tracker-app:latest
+    container_name: fitness-app
+    ports:
+      - "8080:8080"

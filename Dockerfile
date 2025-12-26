@@ -2,7 +2,7 @@ FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-COPY ./target/FitnessTrackerApp-0.0.1-SNAPSHOT.jar /app/fitness-tracker-app.jar
+COPY ./target/*.jar fitness-tracker-app.jar
 
 EXPOSE 8080
 
